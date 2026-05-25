@@ -39,16 +39,15 @@ class _HomeViewState extends ConsumerState<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final initialLoading = ref.watch(initialLoadingProvider);
+    if (initialLoading) return FullScreenLoader();
+
+    final slideShowMovies = ref.watch(moviesSlideshowProvider);
+
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final popularMovies = ref.watch(popularMoviesProvider);
     final upcomingMovies = ref.watch(upcomingMoviesProvider);
     final topRatedMovies = ref.watch(topRatedMoviesProvider);
-
-    final slideShowMovies = ref.watch(moviesSlideshowProvider);
-
-    if (slideShowMovies.isEmpty) {
-      return CircularProgressIndicator();
-    }
 
     return CustomScrollView(
       slivers: [
