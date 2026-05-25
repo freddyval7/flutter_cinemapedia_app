@@ -1,8 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cinemapedia_app/config/helpers/human_formats.dart';
 import 'package:flutter_cinemapedia_app/domain/entities/movie.dart';
 
-class MovieHorizontalListview extends StatelessWidget {
+class MovieHorizontalListview extends StatefulWidget {
   final List<Movie> movies;
   final String? title;
   final String? subTitle;
@@ -17,21 +18,50 @@ class MovieHorizontalListview extends StatelessWidget {
   });
 
   @override
+  State<MovieHorizontalListview> createState() =>
+      _MovieHorizontalListviewState();
+}
+
+class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
+  final scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    scrollController.addListener(() {
+      if (widget.loadNextPage == null) return;
+
+      if ((scrollController.position.pixels + 200) >=
+          scrollController.position.maxScrollExtent) {
+        widget.loadNextPage!();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 400,
       child: Column(
         children: [
-          if (title != null || subTitle != null)
-            _Title(title: title, subTitle: subTitle),
+          if (widget.title != null || widget.subTitle != null)
+            _Title(title: widget.title, subTitle: widget.subTitle),
 
           Expanded(
             child: ListView.builder(
-              itemCount: movies.length,
+              controller: scrollController,
+              itemCount: widget.movies.length,
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return _Slide(movie: movies[index]);
+                return _Slide(movie: widget.movies[index]);
               },
             ),
           ),
@@ -54,6 +84,7 @@ class _Slide extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 2,
         children: [
           SizedBox(
             width: 150,
@@ -86,24 +117,29 @@ class _Slide extends StatelessWidget {
           ),
 
           // Rating
-          Row(
-            children: [
-              Icon(Icons.star_half_outlined, color: Colors.amber, size: 20),
-              SizedBox(width: 3),
-              Text(
-                movie.voteAverage.toStringAsFixed(1),
-                style: textStyles.bodyMedium?.copyWith(
-                  color: Colors.yellow.shade900,
+          SizedBox(
+            width: 150,
+            child: Row(
+              children: [
+                Icon(Icons.star_half_outlined, color: Colors.amber, size: 20),
+                SizedBox(width: 5),
+                Text(
+                  movie.voteAverage.toStringAsFixed(1),
+                  style: textStyles.bodyMedium?.copyWith(
+                    color: Colors.yellow.shade900,
+                  ),
                 ),
-              ),
-              SizedBox(width: 15),
-              Icon(Icons.add_reaction_outlined, color: Colors.red, size: 15),
-              SizedBox(width: 3),
-              Text(
-                movie.popularity.toStringAsFixed(1),
-                style: textStyles.bodySmall,
-              ),
-            ],
+
+                Spacer(), // To avoid crash, is neccesary the width for the row (Wrap with SizedBox)
+
+                Icon(Icons.add_reaction_outlined, color: Colors.red, size: 15),
+                SizedBox(width: 5),
+                Text(
+                  HumanFormats.number(movie.popularity),
+                  style: textStyles.bodySmall,
+                ),
+              ],
+            ),
           ),
         ],
       ),
