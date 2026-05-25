@@ -19,7 +19,7 @@ class MovieHorizontalListview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 350,
+      height: 400,
       child: Column(
         children: [
           if (title != null || subTitle != null)
@@ -77,7 +77,6 @@ class _Slide extends StatelessWidget {
               ),
             ),
           ),
-
           SizedBox(height: 5),
 
           // Title
@@ -89,7 +88,7 @@ class _Slide extends StatelessWidget {
           // Rating
           Row(
             children: [
-              Icon(Icons.star_half_outlined, color: Colors.amber),
+              Icon(Icons.star_half_outlined, color: Colors.amber, size: 20),
               SizedBox(width: 3),
               Text(
                 movie.voteAverage.toStringAsFixed(1),
@@ -97,8 +96,8 @@ class _Slide extends StatelessWidget {
                   color: Colors.yellow.shade900,
                 ),
               ),
-              Spacer(),
-              Icon(Icons.add_reaction_outlined, color: Colors.red),
+              SizedBox(width: 15),
+              Icon(Icons.add_reaction_outlined, color: Colors.red, size: 15),
               SizedBox(width: 3),
               Text(
                 movie.popularity.toStringAsFixed(1),
